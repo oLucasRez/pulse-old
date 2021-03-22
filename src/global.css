@@ -70,3 +70,24 @@ a {
 .App {
   height: 100vh;
 }
+
+circle.center {
+  r: 0.25rem;
+  stroke: none;
+}
+
+circle.display {
+  fill: none;
+  stroke-width: 1px;
+}
+
+circle.main {
+  fill: none;
+  stroke-width: 2px;
+}
+
+circle.hover {
+  fill: none;
+  stroke-width: 7px;
+  opacity: 0;
+}
