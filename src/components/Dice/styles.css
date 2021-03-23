@@ -1,0 +1,6 @@
+.dice-container text {
+  font-weight: 500;
+  font-family: "Rubik", sans-serif;
+  text-anchor: middle;
+  dominant-baseline: middle;
+}
