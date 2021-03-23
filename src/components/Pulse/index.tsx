@@ -1,21 +1,22 @@
 //----------------------------------------------------------------< functions >
 import { memo } from "react";
 //--------------------------------------------------------------------< types >
+import { IPulse } from "../../types/IPulse";
 import { MouseEvent } from "react";
+import { Circle } from "../../types/Circle";
 interface PulseProps {
-  x: string | number;
-  y: string | number;
-  gap: number;
-  amount: number;
-  color: string;
+  pulse: IPulse;
 }
 //================================================================[ < Pulse > ]
-function Pulse({ x, y, amount, gap, color }: PulseProps) {
+function Pulse({ pulse }: PulseProps) {
+  //-------------------------------------------------------------< properties >
+  const { x, y, gap, amount, color } = pulse;
   //----------------------------------------------------------------< methods >
-  function handleMouseEnter(e: MouseEvent<SVGCircleElement>) {
+  function handleMouseEnter(e: MouseEvent<Circle>) {
     e.currentTarget.style.opacity = "1";
   }
-  function handleMouseOut(e: MouseEvent<SVGCircleElement>) {
+
+  function handleMouseOut(e: MouseEvent<Circle>) {
     e.currentTarget.style.opacity = "0";
   }
   //---------------------------------------------------------------------------
