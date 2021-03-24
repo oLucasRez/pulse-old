@@ -1,6 +1,7 @@
 //---------------------------------------------------------------< components >
 import { PulsesDisplayerLayer } from "../PulsesDisplayerLayer";
 import { PulseCreatorLayer } from "../PulseCreatorLayer";
+import { DiceRollerLayer } from "../DiceRollerLayer";
 //===============================================================[ < Window > ]
 export function Window() {
   //-----------------------------------------------------------------< return >
@@ -8,7 +9,8 @@ export function Window() {
   return (
     <>
       <PulsesDisplayerLayer />
-      <PulseCreatorLayer color="orange" />
+      {/* <PulseCreatorLayer color="orange" /> */}
+      <DiceRollerLayer />
     </>
   );
 }

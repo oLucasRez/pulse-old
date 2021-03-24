@@ -1,20 +1,16 @@
 //-------------------------------------------------------------------< styles >
 import "./styles.css";
 //--------------------------------------------------------------------< types >
-import { SVG } from "../../types/SVG";
-import { ReactNode, SVGProps } from "react";
-interface LayerProps extends SVGProps<SVG> {
+import { ISVG } from "../../types/ISVG";
+import { SVGProps, ReactNode } from "react";
+interface IProps extends SVGProps<ISVG> {
   children: ReactNode;
 }
 //================================================================[ < Layer > ]
-export function Layer({ children, ...props }: LayerProps) {
+export function Layer({ children, ...props }: IProps) {
   //-----------------------------------------------------------------< return >
   return (
-    <svg
-      {...props}
-      className="layer-container"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg {...props} className="layer-container">
       {children}
     </svg>
   );

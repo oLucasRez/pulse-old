@@ -1,22 +1,22 @@
-//----------------------------------------------------------------< functions >
-import { memo } from "react";
+//---------------------------------------------------------------< components >
+import { Circle } from "../SVGComponents/Circle";
 //--------------------------------------------------------------------< types >
 import { IPulse } from "../../types/IPulse";
 import { MouseEvent } from "react";
-import { Circle } from "../../types/Circle";
-interface PulseProps {
+import { ICircle } from "../../types/ICircle";
+interface IProps {
   pulse: IPulse;
 }
 //================================================================[ < Pulse > ]
-function Pulse({ pulse }: PulseProps) {
+export function Pulse({ pulse }: IProps) {
   //-------------------------------------------------------------< properties >
-  const { x, y, gap, amount, color } = pulse;
+  const { origin, gap, amount, color } = pulse;
   //----------------------------------------------------------------< methods >
-  function handleMouseEnter(e: MouseEvent<Circle>) {
+  function handleMouseEnter(e: MouseEvent<ICircle>) {
     e.currentTarget.style.opacity = "1";
   }
 
-  function handleMouseOut(e: MouseEvent<Circle>) {
+  function handleMouseOut(e: MouseEvent<ICircle>) {
     e.currentTarget.style.opacity = "0";
   }
   //---------------------------------------------------------------------------
@@ -26,21 +26,19 @@ function Pulse({ pulse }: PulseProps) {
     for (let i = 1; i <= amount; i++) {
       pulses.push(
         <g key={i}>
-          <circle
-            className="display"
-            cx={x}
-            cy={y}
-            r={gap * i}
-            stroke={`var(--${color})`}
+          <Circle
+            type="display"
+            origin={origin}
+            radius={gap * i}
+            stroke={color}
           />
-          <circle
-            className="hover"
-            cx={x}
-            cy={y}
-            r={gap * i}
-            stroke={`var(--${color})`}
-            onMouseEnter={handleMouseEnter}
-            onMouseOut={handleMouseOut}
+          <Circle
+            type="hover"
+            origin={origin}
+            radius={gap * i}
+            stroke={color}
+            onEnter={handleMouseEnter}
+            onOut={handleMouseOut}
           />
         </g>
       );
@@ -49,13 +47,11 @@ function Pulse({ pulse }: PulseProps) {
     return pulses;
   }
   //-----------------------------------------------------------------< return >
-  console.log("pulse rendered");
+  console.log("pulse render");
   return (
     <g className="pulse-container">
-      <circle className="center" cx={x} cy={y} fill={`var(--${color})`} />
+      <Circle type="center" origin={origin} fill={color} />
       {drawPulses()}
     </g>
   );
 }
-
-export default memo(Pulse);

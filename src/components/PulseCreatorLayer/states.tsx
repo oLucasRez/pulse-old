@@ -1,29 +1,34 @@
+//---------------------------------------------------------------< components >
+import { Circle } from "../SVGComponents/Circle";
+//------------------------------------------------------------------< helpers >
+import { subtract, mod } from "../../helpers/vectorHelper";
 //--------------------------------------------------------------------< types >
-import { StateType } from "../../types/StateType";
+import { IColor } from "../../types/IColor";
 import { IPulse } from "../../types/IPulse";
+import { IDispatcher } from "../../types/IDispatcher";
 import { MouseEvent } from "react";
-import { SVG } from "../../types/SVG";
+import { ISVG } from "../../types/ISVG";
 export interface IContext {
-  color: string;
+  color: IColor;
   addPulse: (pulse: IPulse) => void;
-  pulse: StateType<IPulse | undefined>[0];
-  setPulse: StateType<IPulse | undefined>[1];
-  setState: StateType<PulseCreatorState>[1];
+  pulse: IPulse | undefined;
+  setPulse: IDispatcher<IPulse | undefined>;
+  setState: IDispatcher<IState>;
 }
-export interface PulseCreatorState {
-  handleMouseMove(ctx: IContext, e: MouseEvent<SVG>): void;
-  handleClick(ctx: IContext, e: MouseEvent<SVG>): void;
+export interface IState {
+  handleMouseMove(ctx: IContext, e: MouseEvent<ISVG>): void;
+  handleClick(ctx: IContext, e: MouseEvent<ISVG>): void;
   drawPulses(ctx: IContext): JSX.Element[] | void;
 }
 //========================================================[ < PositionState > ]
-export class PositionState implements PulseCreatorState {
+export class PositionState implements IState {
   public handleMouseMove() {}
 
-  public handleClick(ctx: IContext, e: MouseEvent<SVG>) {
+  public handleClick(ctx: IContext, e: MouseEvent<ISVG>) {
     const { setPulse, color, setState } = ctx;
     const { clientX: x, clientY: y } = e;
 
-    setPulse({ x, y, gap: 1, amount: 1, color });
+    setPulse({ origin: { x, y }, gap: 1, amount: 1, color });
 
     setState(new GapState());
   }
@@ -31,20 +36,17 @@ export class PositionState implements PulseCreatorState {
   public drawPulses() {}
 }
 //=============================================================[ < GapState > ]
-export class GapState implements PulseCreatorState {
-  public handleMouseMove(ctx: IContext, e: MouseEvent<SVG>) {
+export class GapState implements IState {
+  public handleMouseMove(ctx: IContext, e: MouseEvent<ISVG>) {
     if (!ctx.pulse) return;
 
     const { pulse, setPulse } = ctx;
     const { clientX: x, clientY: y } = e;
 
-    const dX = x - pulse.x;
-    const dY = y - pulse.y;
-    const gap = Math.sqrt(dX * dX + dY * dY);
+    const d = subtract({ x, y }, pulse.origin);
+    const gap = mod(d);
 
     setPulse({ ...pulse, gap });
-
-    return;
   }
 
   public handleClick(ctx: IContext) {
@@ -56,30 +58,22 @@ export class GapState implements PulseCreatorState {
   public drawPulses(ctx: IContext) {
     if (!ctx.pulse) return;
 
-    const { x, y, gap, color } = ctx.pulse;
+    const { origin, gap, color } = ctx.pulse;
 
     const pulses = [];
 
     pulses.push(
-      <circle
-        key={1}
-        className="main"
-        cx={x}
-        cy={y}
-        r={gap}
-        stroke={`var(--${color})`}
-      />
+      <Circle key={1} type="main" origin={origin} radius={gap} stroke={color} />
     );
 
     for (let i = 2; i <= 10; i++) {
       pulses.push(
-        <circle
+        <Circle
           key={i}
-          className="display"
-          cx={x}
-          cy={y}
-          r={gap * i}
-          stroke={`var(--line)`}
+          type="display"
+          origin={origin}
+          radius={gap * i}
+          stroke="line"
         />
       );
     }
@@ -88,21 +82,17 @@ export class GapState implements PulseCreatorState {
   }
 }
 //==========================================================[ < AmountState > ]
-export class AmountState implements PulseCreatorState {
-  public handleMouseMove(ctx: IContext, e: MouseEvent<SVG>) {
+export class AmountState implements IState {
+  public handleMouseMove(ctx: IContext, e: MouseEvent<ISVG>) {
     if (!ctx.pulse) return;
 
     const { pulse, setPulse } = ctx;
     const { clientX: x, clientY: y } = e;
 
-    const dX = x - pulse.x;
-    const dY = y - pulse.y;
-    const modD = Math.sqrt(dX * dX + dY * dY);
-    const amount = Math.floor(modD / pulse.gap + 1);
+    const d = subtract({ x, y }, pulse.origin);
+    const amount = Math.floor(mod(d) / pulse.gap + 1);
 
     setPulse({ ...pulse, amount });
-
-    return;
   }
 
   public handleClick(ctx: IContext) {
@@ -117,19 +107,18 @@ export class AmountState implements PulseCreatorState {
   public drawPulses(ctx: IContext) {
     if (!ctx.pulse) return [];
 
-    const { x, y, gap, amount, color } = ctx.pulse;
+    const { origin, gap, amount, color } = ctx.pulse;
 
     const pulses = [];
 
     for (let i = 1; i <= amount; i++) {
       pulses.push(
-        <circle
+        <Circle
           key={i}
-          className="main"
-          cx={x}
-          cy={y}
-          r={gap * i}
-          stroke={`var(--${color})`}
+          type="main"
+          origin={origin}
+          radius={gap * i}
+          stroke={color}
         />
       );
     }
