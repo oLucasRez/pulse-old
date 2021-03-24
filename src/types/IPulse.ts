@@ -1,7 +1,9 @@
+import { IVector } from "./IVector";
+import { IColor } from "./IColor";
+
 export interface IPulse {
-  x: number;
-  y: number;
+  origin: IVector;
   gap: number;
   amount: number;
-  color: string;
+  color: IColor;
 }
