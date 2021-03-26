@@ -28,7 +28,7 @@ export function Circle({
       className={type}
       cx={origin.x}
       cy={origin.y}
-      r={radius}
+      r={radius ?? "0.25rem"}
       fill={fill ? `var(--${fill})` : undefined}
       stroke={stroke ? `var(--${stroke})` : undefined}
       onClick={onClick}
