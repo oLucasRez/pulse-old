@@ -60,6 +60,21 @@ export function MagnetCursorProvider({ children }: IProps) {
             nearest = sub(pulse.origin, radius);
         }
       });
+
+      // try attach to last circle of last pulse (why do i need this?)
+      const lastPulse = pulses[pulses.length - 1];
+      if (lastPulse) {
+        const distCursorOrigin = sub(lastPulse.origin, cursor);
+        distCursorNearest = mod(sub(nearest, cursor));
+        const radius = mult(
+          norm(distCursorOrigin),
+          lastPulse.gap * lastPulse.amount
+        );
+        const distCursorCircle = mod(sub(distCursorOrigin, radius));
+
+        if (distCursorCircle < distCursorNearest)
+          nearest = sub(lastPulse.origin, radius);
+      }
     }
 
     nearest = distCursorNearest > intensity ? cursor : nearest;
