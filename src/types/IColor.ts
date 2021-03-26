@@ -9,4 +9,5 @@ export type IColor =
   | "cyan"
   | "green"
   | "yellow"
-  | "orange";
+  | "orange"
+  | "white";
