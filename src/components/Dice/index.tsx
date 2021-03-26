@@ -1,9 +1,9 @@
+//---------------------------------------------------------------< components >
+import { Text } from "../SVGComponents/Text";
 //------------------------------------------------------------------< helpers >
 import { zero, sum, mod, flip, mult } from "../../helpers/vectorHelper";
 //--------------------------------------------------------------------< hooks >
 import { useState, useEffect } from "react";
-//-------------------------------------------------------------------< styles >
-import "./styles.css";
 //--------------------------------------------------------------------< types >
 import { IVector } from "../../types/IVector";
 interface IProps {
@@ -12,12 +12,19 @@ interface IProps {
   sides: number;
   value?: number;
   color: string;
+  size?: number;
 }
 //-------------------------------------------------------------------< global >
-const size = 50;
 const friction = 0.95;
 //=================================================================[ < Dice > ]
-export function Dice({ origin, force, sides, value, color }: IProps) {
+export function Dice({
+  origin,
+  force,
+  sides,
+  value,
+  color,
+  size = 50,
+}: IProps) {
   //-------------------------------------------------------------< properties >
   const { x, y } = origin;
   //---------------------------------------------------------------------------
@@ -81,14 +88,18 @@ export function Dice({ origin, force, sides, value, color }: IProps) {
   return (
     <g className="dice-container">
       <polygon points={getPoints()} fill={`var(--${color})`} />
-      <text
-        x={x + offset.x}
-        y={y + size * 0.03 + offset.y}
-        fontSize={size * 0.4}
-        fill="var(--white)"
+      <Text
+        origin={{
+          x: x + offset.x,
+          y: y + size * 0.03 + offset.y,
+        }}
+        font="Rubik 500"
+        size={size * 0.4}
+        fill="white"
+        justify="middle"
       >
         {random}
-      </text>
+      </Text>
     </g>
   );
 }
