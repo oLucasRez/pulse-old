@@ -1,23 +1,19 @@
 //--------------------------------------------------------------------< types >
 import { IVector } from "../../types/IVector";
 import { IColor } from "../../types/IColor";
-import { ICircle } from "../../types/ICircle";
 import { MouseEvent } from "react";
+import { ICircle } from "../../types/ICircle";
 interface IProps {
-  key?: number;
-  type: "center" | "display" | "main" | "hover";
+  type?: "center" | "display" | "main" | "hover";
   origin: IVector;
   radius?: number;
   fill?: IColor;
   stroke?: IColor;
   onClick?: (e: MouseEvent<ICircle>) => void;
-  onEnter?: (e: MouseEvent<ICircle>) => void;
   onMove?: (e: MouseEvent<ICircle>) => void;
-  onOut?: (e: MouseEvent<ICircle>) => void;
 }
 //===============================================================[ < Circle > ]
 export function Circle({
-  key,
   type,
   origin,
   radius,
@@ -29,7 +25,6 @@ export function Circle({
   //-----------------------------------------------------------------< return >
   return (
     <circle
-      key={key}
       className={type}
       cx={origin.x}
       cy={origin.y}

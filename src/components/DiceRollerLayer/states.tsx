@@ -75,11 +75,18 @@ class PullState implements IState {
 }
 //===========================================================[ < ThrowState > ]
 class ThrowState implements IState {
-  public handleDown() {}
+  public handleDown(ctx: IContext, e: MouseEvent<ISVG>) {
+    const { setOrigin, setPull, setState } = ctx;
+    const { clientX: x, clientY: y } = e;
+
+    setOrigin({ x, y });
+    setPull({ x, y });
+    setState(new PullState());
+  }
 
   public handleMove() {}
 
-  public handleUp() {}
+  public handleUp(ctx: IContext) {}
 
   public draw(ctx: IContext) {
     const { pull, origin } = ctx;

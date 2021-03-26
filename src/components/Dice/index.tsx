@@ -1,5 +1,5 @@
 //------------------------------------------------------------------< helpers >
-import { zero, sum, mod, flip, multiply } from "../../helpers/vectorHelper";
+import { zero, sum, mod, flip, mult } from "../../helpers/vectorHelper";
 //--------------------------------------------------------------------< hooks >
 import { useState, useEffect } from "react";
 //-------------------------------------------------------------------< styles >
@@ -53,7 +53,7 @@ export function Dice({ origin, force, sides, value, color }: IProps) {
         _velocity = flip(velocity, "horizontally");
       }
 
-      setVelocity(multiply(_velocity, friction));
+      setVelocity(mult(_velocity, friction));
       setOffset(sum(offset, _velocity));
       setSpin((spin + spinVelocity) * friction);
     }, 1000 / 24);

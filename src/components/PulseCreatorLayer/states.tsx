@@ -1,7 +1,7 @@
 //---------------------------------------------------------------< components >
 import { Circle } from "../SVGComponents/Circle";
 //------------------------------------------------------------------< helpers >
-import { subtract, mod } from "../../helpers/vectorHelper";
+import { sub, mod } from "../../helpers/vectorHelper";
 //--------------------------------------------------------------------< types >
 import { IColor } from "../../types/IColor";
 import { IPulse } from "../../types/IPulse";
@@ -43,7 +43,7 @@ export class GapState implements IState {
     const { pulse, setPulse } = ctx;
     const { clientX: x, clientY: y } = e;
 
-    const d = subtract({ x, y }, pulse.origin);
+    const d = sub({ x, y }, pulse.origin);
     const gap = mod(d);
 
     setPulse({ ...pulse, gap });
@@ -89,7 +89,7 @@ export class AmountState implements IState {
     const { pulse, setPulse } = ctx;
     const { clientX: x, clientY: y } = e;
 
-    const d = subtract({ x, y }, pulse.origin);
+    const d = sub({ x, y }, pulse.origin);
     const amount = Math.floor(mod(d) / pulse.gap + 1);
 
     setPulse({ ...pulse, amount });
