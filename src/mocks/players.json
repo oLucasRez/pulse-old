@@ -1,0 +1,17 @@
+[
+  {
+    "object": "Caneta Pena",
+    "color": "orange",
+    "dice": 4
+  },
+  {
+    "object": "Olho Mágico",
+    "color": "blue",
+    "dice": 6
+  },
+  {
+    "object": "Zarabatana",
+    "color": "green",
+    "dice": 8
+  }
+]
