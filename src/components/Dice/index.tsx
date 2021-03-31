@@ -3,39 +3,41 @@ import { Text } from "../SVGComponents/Text";
 //------------------------------------------------------------------< helpers >
 import { zero, sum, mod, flip, mult } from "../../helpers/vectorHelper";
 //--------------------------------------------------------------------< hooks >
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext, useMemo } from "react";
+//-----------------------------------------------------------------< contexts >
+import { DicesContext } from "../../contexts/DicesContext";
 //--------------------------------------------------------------------< types >
+import { IDice } from "../../types/IDice";
 import { IVector } from "../../types/IVector";
+import { PlayersContext } from "../../contexts/PlayersContext";
+import { GameContext } from "../../contexts/GameContext";
 interface IProps {
-  origin: IVector;
+  dice: IDice;
   force?: IVector;
-  sides: number;
-  value?: number;
-  color: string;
   size?: number;
+  overloadable?: boolean;
 }
 //-------------------------------------------------------------------< global >
 const friction = 0.95;
 //=================================================================[ < Dice > ]
-export function Dice({
-  origin,
-  force,
-  sides,
-  value,
-  color,
-  size = 50,
-}: IProps) {
+export function Dice({ dice, force, size = 50, overloadable }: IProps) {
   //-------------------------------------------------------------< properties >
-  const { x, y } = origin;
+  const { x, y } = dice.origin ?? zero;
+  //---------------------------------------------------------------------------
+  const { currentPlayer, nextPlayer } = useContext(GameContext);
+  const { updateDice, onRolled } = useContext(DicesContext);
   //---------------------------------------------------------------------------
   const [offset, setOffset] = useState<IVector>(zero);
   const [velocity, setVelocity] = useState<IVector>(force ?? zero);
   const [spin, setSpin] = useState(0);
   const [spinVelocity, setSpinVelocity] = useState(0);
   //---------------------------------------------------------------------------
-  const random =
-    value === undefined ? Math.floor(Math.random() * sides + 1) : value;
-  const vector = sum(sum(origin, offset), velocity);
+  const random = useMemo(
+    () =>
+      !dice.value ? Math.floor(Math.random() * dice.sides + 1) : dice.value,
+    [offset]
+  );
+  const vector = sum(sum(dice.origin ?? zero, offset), velocity);
   const outOf = {
     left: vector.x < size / 2,
     right: vector.x >= window.innerWidth - size / 2,
@@ -44,7 +46,16 @@ export function Dice({
   };
   //----------------------------------------------------------------< methods >
   useEffect(() => {
-    if (mod(velocity) <= 1) return;
+    if (mod(velocity) <= 1) {
+      if (overloadable) {
+        onRolled();
+        updateDice(currentPlayer.color, {
+          value: random,
+          origin: sum({ x, y }, offset),
+        });
+      }
+      return;
+    }
 
     const interval = setInterval(() => {
       let _velocity = velocity;
@@ -66,15 +77,15 @@ export function Dice({
     }, 1000 / 24);
 
     return () => clearInterval(interval);
-  });
+  }, [offset]);
   //---------------------------------------------------------------------------
   function getPoints() {
     const r = size / 2;
-    const arc = (2 * Math.PI) / sides;
-    const circle = Math.PI * size;
+    const arc = (2 * Math.PI) / dice.sides;
+    const circle = (Math.PI * size) / 2;
     let points = "";
 
-    for (let i = 0; i < sides; i++) {
+    for (let i = 0; i < dice.sides; i++) {
       const _x = Math.cos(i * arc - spin / circle) * r + x + offset.x;
       const _y = Math.sin(i * arc - spin / circle) * r + y + offset.y;
 
@@ -87,12 +98,9 @@ export function Dice({
   console.log("dice render");
   return (
     <g className="dice-container">
-      <polygon points={getPoints()} fill={`var(--${color})`} />
+      <polygon points={getPoints()} fill={`var(--${dice.color})`} />
       <Text
-        origin={{
-          x: x + offset.x,
-          y: y + size * 0.03 + offset.y,
-        }}
+        origin={sum({ x, y: y + size * 0.03 }, offset)}
         font="Rubik 500"
         size={size * 0.4}
         fill="white"

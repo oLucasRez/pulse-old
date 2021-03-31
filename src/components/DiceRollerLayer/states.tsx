@@ -3,11 +3,13 @@ import { Circle } from "../SVGComponents/Circle";
 import { Line } from "../SVGComponents/Line";
 import { Dice } from "../Dice";
 //--------------------------------------------------------------------< types >
+import { IDice } from "../../types/IDice";
 import { IVector } from "../../types/IVector";
 import { IDispatcher } from "../../types/IDispatcher";
 import { MouseEvent } from "react";
 import { ISVG } from "../../types/ISVG";
 export interface IContext {
+  dice: IDice;
   origin: IVector;
   setOrigin: IDispatcher<IVector>;
   pull: IVector;
@@ -62,13 +64,19 @@ class PullState implements IState {
   }
 
   public draw(ctx: IContext): JSX.Element {
-    const { origin, pull } = ctx;
+    const { origin, dice, pull } = ctx;
 
     return (
       <>
-        <Circle type="center" origin={origin} fill="blue" />
-        <Line from={origin} to={pull} stroke="blue" />
-        <Dice origin={pull} sides={5} value={5} color="blue" />
+        <Circle type="center" origin={origin} fill={dice.color} />
+        <Line from={origin} to={pull} stroke={dice.color} />
+        <Dice
+          dice={{ ...dice, origin: pull }}
+          // origin={pull}
+          // sides={player.dice}
+          // value={player.dice}
+          // color={player.color}
+        />
       </>
     );
   }
@@ -86,14 +94,23 @@ class ThrowState implements IState {
 
   public handleMove() {}
 
-  public handleUp(ctx: IContext) {}
+  public handleUp() {}
 
   public draw(ctx: IContext) {
-    const { pull, origin } = ctx;
+    const { origin, pull, dice } = ctx;
 
     const x = (origin.x - pull.x) * 0.5;
     const y = (origin.y - pull.y) * 0.5;
 
-    return <Dice origin={pull} force={{ x, y }} sides={5} color="blue" />;
+    return (
+      <Dice
+        overloadable
+        dice={{ ...dice, origin: pull }}
+        // origin={pull}
+        force={{ x, y }}
+        // sides={player.dice}
+        // color={player.color}
+      />
+    );
   }
 }

@@ -1,5 +1,7 @@
+//--------------------------------------------------------------------< hooks >
+import { useState } from "react";
 //-----------------------------------------------------------------< contexts >
-import { createContext, useState } from "react";
+import { createContext } from "react";
 //--------------------------------------------------------------------< types >
 import { IPlayer } from "../types/IPlayer";
 import { ReactNode } from "react";
@@ -18,17 +20,14 @@ export function PlayersProvider({ children }: IProps) {
     {
       object: "Caneta Pena",
       color: "orange",
-      dice: 4,
     },
     {
       object: "Olho Mágico",
       color: "blue",
-      dice: 6,
     },
     {
       object: "Zarabatana",
       color: "green",
-      dice: 8,
     },
   ]);
   //-----------------------------------------------------------------< return >
