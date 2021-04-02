@@ -2,6 +2,10 @@
 import { Circle } from "../SVGComponents/Circle";
 import { Line } from "../SVGComponents/Line";
 import { Dice } from "../Dice";
+import { DynamicDice } from "../DynamicDice";
+import { Text } from "../SVGComponents/Text";
+//------------------------------------------------------------------< helpers >
+import { mod, sub } from "../../helpers/vectorHelper";
 //--------------------------------------------------------------------< types >
 import { IDice } from "../../types/IDice";
 import { IVector } from "../../types/IVector";
@@ -15,12 +19,13 @@ export interface IContext {
   pull: IVector;
   setPull: IDispatcher<IVector>;
   setState: IDispatcher<IState>;
+  onRollStop: (dice: IDice) => void;
 }
 export interface IState {
-  handleDown(ctx: IContext, e: MouseEvent<ISVG>): void;
-  handleMove(ctx: IContext, e: MouseEvent<ISVG>): void;
-  handleUp(ctx: IContext, e: MouseEvent<ISVG>): void;
-  draw(ctx: IContext): JSX.Element;
+  handleDown?(ctx: IContext, e: MouseEvent<ISVG>): void;
+  handleMove?(ctx: IContext, e: MouseEvent<ISVG>): void;
+  handleUp?(ctx: IContext, e: MouseEvent<ISVG>): void;
+  draw?(ctx: IContext): JSX.Element;
 }
 //=======================================================[ < BeginningState > ]
 export class BeginningState implements IState {
@@ -32,19 +37,9 @@ export class BeginningState implements IState {
     setPull({ x, y });
     setState(new PullState());
   }
-
-  public handleMove() {}
-
-  public handleUp() {}
-
-  public draw() {
-    return <></>;
-  }
 }
 //============================================================[ < PullState > ]
 class PullState implements IState {
-  public handleDown() {}
-
   public handleMove(ctx: IContext, e: MouseEvent<ISVG>) {
     const { origin, setPull } = ctx;
     const { clientX: mouseX, clientY: mouseY } = e;
@@ -58,9 +53,13 @@ class PullState implements IState {
   }
 
   public handleUp(ctx: IContext) {
-    const { setState } = ctx;
+    const { origin, pull, setState } = ctx;
 
-    setState(new ThrowState());
+    if (mod(sub(pull, origin)) < 50) {
+      setState(new WarnState());
+    } else {
+      setState(new ThrowState());
+    }
   }
 
   public draw(ctx: IContext): JSX.Element {
@@ -70,14 +69,35 @@ class PullState implements IState {
       <>
         <Circle type="center" origin={origin} fill={dice.color} />
         <Line from={origin} to={pull} stroke={dice.color} />
-        <Dice
-          dice={{ ...dice, origin: pull }}
-          // origin={pull}
-          // sides={player.dice}
-          // value={player.dice}
-          // color={player.color}
-        />
+        <Dice dice={{ ...dice, origin: pull, value: dice.sides }} />
       </>
+    );
+  }
+}
+//============================================================[ < WarnState > ]
+class WarnState implements IState {
+  public handleDown(ctx: IContext, e: MouseEvent<ISVG>) {
+    const { setOrigin, setPull, setState } = ctx;
+    const { clientX: x, clientY: y } = e;
+
+    setOrigin({ x, y });
+    setPull({ x, y });
+    setState(new PullState());
+  }
+
+  public draw(ctx: IContext) {
+    const { origin } = ctx;
+
+    return (
+      <Text
+        origin={origin}
+        fill="line"
+        font="sansserif regular"
+        size={16}
+        justify="middle"
+      >
+        Clique e arraste para lançar o dado
+      </Text>
     );
   }
 }
@@ -92,24 +112,21 @@ class ThrowState implements IState {
     setState(new PullState());
   }
 
-  public handleMove() {}
-
-  public handleUp() {}
-
   public draw(ctx: IContext) {
-    const { origin, pull, dice } = ctx;
+    const { origin, pull, dice, setState, onRollStop } = ctx;
 
     const x = (origin.x - pull.x) * 0.5;
     const y = (origin.y - pull.y) * 0.5;
 
     return (
-      <Dice
+      <DynamicDice
         overloadable
         dice={{ ...dice, origin: pull }}
-        // origin={pull}
         force={{ x, y }}
-        // sides={player.dice}
-        // color={player.color}
+        onStop={(dice: IDice) => {
+          setState(new BeginningState());
+          onRollStop(dice);
+        }}
       />
     );
   }

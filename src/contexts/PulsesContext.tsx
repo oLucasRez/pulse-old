@@ -7,24 +7,17 @@ import { CrossingsContext } from "./CrossingsContext";
 import { IPulse } from "../types/IPulse";
 import { IColor } from "../types/IColor";
 import { ReactNode } from "react";
-import { IVector } from "../types/IVector";
-interface IData {
+export interface IPulsesContext {
   pulses: IPulse[];
   addPulse: (pulse: IPulse) => void;
-  updatePulse: (color: IColor, whatToUpdate: WhatToUpdate) => void;
+  updatePulse: (color: IColor, whatToUpdate: any) => void;
   getPulse: (color: IColor) => IPulse | undefined;
 }
 interface IProps {
   children: ReactNode;
 }
-interface WhatToUpdate {
-  origin?: IVector;
-  amount?: number;
-  gap?: number;
-  color?: IColor;
-}
 //-------------------------------------------------------------------< global >
-export const PulsesContext = createContext({} as IData);
+export const PulsesContext = createContext({} as IPulsesContext);
 //=======================================================[ < PulsesProvider > ]
 export function PulsesProvider({ children }: IProps) {
   //-------------------------------------------------------------< properties >
@@ -40,21 +33,25 @@ export function PulsesProvider({ children }: IProps) {
   ]);
   //----------------------------------------------------------------< methods >
   function addPulse(pulse: IPulse) {
-    console.log([...pulses, pulse]);
-    setPulses([...pulses, pulse]);
-    addNewCrossings(pulse, [...pulses, pulse]);
+    if (getPulse(pulse.color)) return;
+
+    const _pulses = [...pulses];
+    _pulses.push(pulse);
+
+    setPulses(_pulses);
+    addNewCrossings(pulse, _pulses);
   }
 
-  function updatePulse(color: IColor, whatToUpdate: WhatToUpdate) {
+  function updatePulse(color: IColor, whatToUpdate: any) {
     const _pulses = pulses.map((pulse) => {
-      if (pulse.color === color) {
+      if (pulse.color === color)
         return {
           origin: whatToUpdate.origin ?? pulse.origin,
           amount: whatToUpdate.amount ?? pulse.amount,
           gap: whatToUpdate.gap ?? pulse.gap,
           color: whatToUpdate.color ?? pulse.color,
         };
-      } else return pulse;
+      else return pulse;
     });
 
     setPulses(_pulses);

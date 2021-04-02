@@ -1,44 +1,78 @@
-//------------------------------------------------------------------< classes >
-import { PositionState } from "./states";
 //---------------------------------------------------------------< components >
 import { Circle } from "../SVGComponents/Circle";
+import { Layer, LayerProps } from "../Layer";
+//------------------------------------------------------------------< helpers >
+import { sub, zero, mod } from "../../helpers/vectorHelper";
 //--------------------------------------------------------------------< hooks >
 import { useContext, useState } from "react";
 //-----------------------------------------------------------------< contexts >
 import { PulsesContext } from "../../contexts/PulsesContext";
+import { DicesContext } from "../../contexts/DicesContext";
 //--------------------------------------------------------------------< types >
-import { IColor } from "../../types/IColor";
-import { IPulse } from "../../types/IPulse";
-import { IState, IContext } from "./states";
+import { IDice } from "../../types/IDice";
 import { MouseEvent } from "react";
 import { ISVG } from "../../types/ISVG";
-import { Layer } from "../Layer";
-interface IProps {
-  color: IColor;
+interface IProps extends LayerProps {
+  dice: IDice;
+  onPulseCreated: () => void;
 }
 //====================================================[ < PulseCreatorLayer > ]
-export function PulseCreatorLayer({ color }: IProps) {
+export function PulseCreatorLayer({ dice, onPulseCreated, ...props }: IProps) {
   //-------------------------------------------------------------< properties >
+  const { value: amount, color } = dice;
+  //---------------------------------------------------------------------------
   const { addPulse } = useContext(PulsesContext);
+  const { getDice } = useContext(DicesContext);
   //---------------------------------------------------------------------------
-  const [pulse, setPulse] = useState<IPulse>();
-  const [state, setState] = useState<IState>(new PositionState());
-  //---------------------------------------------------------------------------
-  const _this: IContext = { color, addPulse, pulse, setPulse, setState };
+  const [gap, setGap] = useState<number>(0);
   //----------------------------------------------------------------< methods >
   function handleMouseMove(e: MouseEvent<ISVG>) {
-    state.handleMouseMove(_this, e);
+    const { clientX: x, clientY: y } = e;
+
+    const d = sub({ x, y }, getDice(dice.color).origin ?? zero);
+    const _gap = mod(d);
+
+    setGap(_gap);
   }
 
   function handleClick(e: MouseEvent<ISVG>) {
-    state.handleClick(_this, e);
+    addPulse({
+      origin: getDice(dice.color).origin ?? zero,
+      gap,
+      amount,
+      color,
+    });
+    onPulseCreated();
+  }
+
+  function drawPulses() {
+    const origin = getDice(dice.color).origin ?? zero;
+
+    const pulses = [];
+
+    pulses.push(
+      <Circle key={1} type="main" origin={origin} radius={gap} stroke={color} />
+    );
+
+    for (let i = 2; i <= amount; i++) {
+      pulses.push(
+        <Circle
+          key={i}
+          type="display"
+          origin={origin}
+          radius={gap * i}
+          stroke="line"
+        />
+      );
+    }
+
+    return pulses;
   }
   //-----------------------------------------------------------------< return >
   console.log("pulse-creator-layer render");
   return (
-    <Layer onMouseMove={handleMouseMove} onClick={handleClick}>
-      {pulse && <Circle type="center" origin={pulse.origin} fill={color} />}
-      {state.drawPulses(_this)}
+    <Layer {...props} onMouseMove={handleMouseMove} onClick={handleClick}>
+      {drawPulses()}
     </Layer>
   );
 }

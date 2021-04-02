@@ -1,7 +1,7 @@
 //------------------------------------------------------------------< classes >
 import { BeginningState } from "./states";
 //---------------------------------------------------------------< components >
-import { Layer } from "../Layer";
+import { Layer, LayerProps } from "../Layer";
 //------------------------------------------------------------------< helpers >
 import { zero } from "../../helpers/vectorHelper";
 //--------------------------------------------------------------------< hooks >
@@ -12,11 +12,12 @@ import { IVector } from "../../types/IVector";
 import { IContext, IState } from "./states";
 import { MouseEvent } from "react";
 import { ISVG } from "../../types/ISVG";
-interface IProps {
+interface IProps extends LayerProps {
   dice: IDice;
+  onRollStop: (dice: IDice) => void;
 }
 //======================================================[ < DiceRollerLayer > ]
-export function DiceRollerLayer({ dice }: IProps) {
+export function DiceRollerLayer({ dice, onRollStop, ...props }: IProps) {
   //-------------------------------------------------------------< properties >
   const [origin, setOrigin] = useState<IVector>(zero);
   const [pull, setPull] = useState<IVector>(zero);
@@ -29,28 +30,30 @@ export function DiceRollerLayer({ dice }: IProps) {
     pull,
     setPull,
     setState,
+    onRollStop,
   };
   //----------------------------------------------------------------< methods >
   function handleDown(e: MouseEvent<ISVG>) {
-    state.handleDown(_this, e);
+    if (state.handleDown) state.handleDown(_this, e);
   }
 
   function handleMove(e: MouseEvent<ISVG>) {
-    state.handleMove(_this, e);
+    if (state.handleMove) state.handleMove(_this, e);
   }
 
   function handleUp(e: MouseEvent<ISVG>) {
-    state.handleUp(_this, e);
+    if (state.handleUp) state.handleUp(_this, e);
   }
   //-----------------------------------------------------------------< return >
   console.log("dice-roller-layer render");
   return (
     <Layer
+      {...props}
       onMouseDown={handleDown}
       onMouseMove={handleMove}
       onMouseUp={handleUp}
     >
-      {state.draw(_this)}
+      {state.draw && state.draw(_this)}
     </Layer>
   );
 }

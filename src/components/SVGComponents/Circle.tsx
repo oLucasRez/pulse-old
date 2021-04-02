@@ -11,6 +11,8 @@ interface IProps {
   stroke?: IColor;
   onClick?: (e: MouseEvent<ICircle>) => void;
   onMove?: (e: MouseEvent<ICircle>) => void;
+  onEnter?: (e: MouseEvent<ICircle>) => void;
+  onOut?: (e: MouseEvent<ICircle>) => void;
 }
 //===============================================================[ < Circle > ]
 export function Circle({
@@ -21,6 +23,8 @@ export function Circle({
   stroke,
   onClick,
   onMove,
+  onEnter,
+  onOut,
 }: IProps) {
   //-----------------------------------------------------------------< return >
   return (
@@ -29,10 +33,12 @@ export function Circle({
       cx={origin.x}
       cy={origin.y}
       r={radius ?? "0.25rem"}
-      fill={fill ? `var(--${fill})` : undefined}
+      fill={fill ? `var(--${fill})` : "#00000000"}
       stroke={stroke ? `var(--${stroke})` : undefined}
       onClick={onClick}
       onMouseMove={onMove}
+      onMouseEnter={onEnter}
+      onMouseOut={onOut}
     />
   );
 }

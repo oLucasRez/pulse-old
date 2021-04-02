@@ -9,29 +9,25 @@ import { IDice } from "../types/IDice";
 import { IPlayer } from "../types/IPlayer";
 import { IVector } from "../types/IVector";
 import { IColor } from "../types/IColor";
-interface IData {
-  // currentDice?: IDice;
+export interface IDicesContext {
   dices: IDice[];
-  // setCurrentDice: IDispatcher<IDice | undefined>;
-  rolled: number;
   addDice: (dice: IDice) => void;
-  getDiceByPlayer: (player: IPlayer) => IDice | undefined;
-  updateDice: (color: IColor, whatToUpdate: WhatToUpdate) => void;
-  onRolled: () => void;
+  // getDiceByPlayer: (player: IPlayer) => IDice;
+  getDice: (color: IColor) => IDice;
+  updateDice: (color: IColor, whatToUpdate: any) => void;
 }
 interface IProps {
   children: ReactNode;
 }
-interface WhatToUpdate {
-  origin?: IVector;
-  value?: number;
-}
+// interface WhatToUpdate {
+//   origin?: IVector;
+//   value?: number;
+// }
 //-------------------------------------------------------------------< global >
-export const DicesContext = createContext({} as IData);
+export const DicesContext = createContext({} as IDicesContext);
 //========================================================[ < DicesProvider > ]
 export function DicesProvider({ children }: IProps) {
   //-------------------------------------------------------------< properties >
-  const [rolled, setRolled] = useState(0);
   const [dices, setDices] = useState<IDice[]>([
     {
       color: "orange",
@@ -54,33 +50,27 @@ export function DicesProvider({ children }: IProps) {
     setDices([...dices, dice]);
   }
 
-  function getDiceByPlayer(player: IPlayer) {
-    return dices.find((dice) => dice.color === player.color);
+  function getDice(color: IColor) {
+    return dices.find((dice) => dice.color === color) ?? ({} as IDice);
   }
 
-  function updateDice(color: IColor, whatToUpdate: WhatToUpdate) {
+  function updateDice(color: IColor, { origin, value }: any) {
     const _dices = dices.map((dice) => {
-      if (dice.color === color) {
+      if (dice.color === color)
         return {
           ...dice,
-          origin: whatToUpdate.origin ?? dice.origin,
-          value: whatToUpdate.value ?? dice.value,
+          origin: origin ?? dice.origin,
+          value: value ?? dice.value,
         };
-      } else return dice;
+      else return dice;
     });
 
     setDices(_dices);
   }
-
-  function onRolled() {
-    setRolled(rolled + 1);
-  }
   //-----------------------------------------------------------------< return >
   console.log("dices-provider rendered");
   return (
-    <DicesContext.Provider
-      value={{ dices, rolled, addDice, getDiceByPlayer, updateDice, onRolled }}
-    >
+    <DicesContext.Provider value={{ dices, addDice, getDice, updateDice }}>
       {children}
     </DicesContext.Provider>
   );

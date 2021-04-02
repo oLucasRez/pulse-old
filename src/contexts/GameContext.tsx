@@ -25,12 +25,12 @@ interface IProps {
   children: ReactNode;
 }
 //-------------------------------------------------------------------< global >
-export const GameContext = createContext({} as IData);
+export const GameContext_old = createContext({} as IData);
 //=========================================================[ < GameProvider > ]
-export function GameProvider({ children }: IProps) {
+export function GameProvider_old({ children }: IProps) {
   //-------------------------------------------------------------< properties >
   const { players } = useContext(PlayersContext);
-  const { getDiceByPlayer, rolled } = useContext(DicesContext);
+  const { getDice } = useContext(DicesContext);
   //---------------------------------------------------------------------------
   const [clockwise, setClockwise] = useState<1 | 0 | -1>(1);
   const [step, setStep] = useState<IStep>("elements-creation");
@@ -51,11 +51,9 @@ export function GameProvider({ children }: IProps) {
   });
   //----------------------------------------------------------------< methods >
   useEffect(() => {
-    const currentDice = getDiceByPlayer(players[current]);
+    const currentDice = getDice(players[current].color);
 
     if (!currentDice) return;
-
-    // if (!currentPlayerDice) return;
 
     const __overloads = [..._overloads];
 
@@ -66,16 +64,12 @@ export function GameProvider({ children }: IProps) {
 
     setOverloads(__overloads);
   }, [current]);
-
-  useEffect(() => {
-    if (rolled === 0) return;
-    nextPlayer();
-  }, [rolled]);
   //---------------------------------------------------------------------------
   function nextStep() {
     switch (step) {
       case "elements-creation":
-        setStep("mainfact-creation");
+        // setStep("mainfact-creation");
+        setStep("investigation");
         setClockwise(-1);
         break;
       case "mainfact-creation":
@@ -106,12 +100,13 @@ export function GameProvider({ children }: IProps) {
   }
 
   function nextPlayer() {
+    if (!((current + 1) % players.length)) nextStep();
     setCurrent((current + 1) % players.length);
   }
   //-----------------------------------------------------------------< return >
   console.log("game-provider rendered");
   return (
-    <GameContext.Provider
+    <GameContext_old.Provider
       value={{
         clockwise,
         step,
@@ -123,6 +118,6 @@ export function GameProvider({ children }: IProps) {
       }}
     >
       {children}
-    </GameContext.Provider>
+    </GameContext_old.Provider>
   );
 }

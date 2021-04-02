@@ -4,9 +4,8 @@ import { Window } from "./components/Window";
 import { PlayersProvider } from "./contexts/PlayersContext";
 import { CrossingsProvider } from "./contexts/CrossingsContext";
 import { PulsesProvider } from "./contexts/PulsesContext";
-import { MagnetCursorProvider } from "./contexts/MagnetCursorContext";
 import { DicesProvider } from "./contexts/DicesContext";
-import { GameProvider } from "./contexts/GameContext";
+// import { GameProvider } from "./contexts/GameContext";
 //==================================================================[ < App > ]
 function App() {
   //-----------------------------------------------------------------< return >
@@ -15,13 +14,11 @@ function App() {
       <PlayersProvider>
         <CrossingsProvider>
           <PulsesProvider>
-            <MagnetCursorProvider>
-              <DicesProvider>
-                <GameProvider>
-                  <Window />
-                </GameProvider>
-              </DicesProvider>
-            </MagnetCursorProvider>
+            <DicesProvider>
+              {/* <GameProvider> */}
+              <Window />
+              {/* </GameProvider> */}
+            </DicesProvider>
           </PulsesProvider>
         </CrossingsProvider>
       </PlayersProvider>

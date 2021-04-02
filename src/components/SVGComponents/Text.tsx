@@ -2,24 +2,42 @@
 import { IVector } from "../../types/IVector";
 import { IColor } from "../../types/IColor";
 import { ReactNode } from "react";
-interface IProps {
+export interface TextProps {
   origin: IVector;
   fill: IColor;
-  font: "Kalam 300" | "Kalam 700" | "Rubik 500";
+  font: "cursive light" | "cursive bold" | "sansserif regular";
   size: number;
   justify?: "start" | "middle" | "end";
   children: ReactNode;
 }
+//-------------------------------------------------------------------< global >
+const dict: any = {
+  cursive: "Kalam",
+  sansserif: "Rubik",
+
+  light: "300",
+  regular: "500",
+  bold: "700",
+};
 //=================================================================[ < Text > ]
-export function Text({ origin, fill, font, size, justify, children }: IProps) {
+export function Text({
+  origin,
+  fill,
+  font,
+  size,
+  justify,
+  children,
+}: TextProps) {
+  //-------------------------------------------------------------< properties >
+  const [fontFamily, fontWeight] = font.split(" ");
   //-----------------------------------------------------------------< return >
   return (
     <text
       x={origin.x}
       y={origin.y}
       fill={fill ? `var(--${fill})` : undefined}
-      fontFamily={font.split(" ")[0]}
-      fontWeight={font.split(" ")[1]}
+      fontFamily={dict[fontFamily]}
+      fontWeight={dict[fontWeight]}
       fontSize={size}
       textAnchor={justify ?? "start"}
       dominantBaseline="middle"
