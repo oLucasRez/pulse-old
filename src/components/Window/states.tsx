@@ -14,10 +14,14 @@ import { IPlayer } from "../../types/IPlayer";
 import { IDice } from "../../types/IDice";
 import { IDispatcher } from "../../types/IDispatcher";
 import { IPulse } from "../../types/IPulse";
+import { NoteCreatorLayer } from "../NoteCreatorLayer";
+import { INote } from "../../types/INote";
+import { INotesContext } from "../../contexts/NotesContext";
 export interface IContext {
   playersContext: IPlayersContext;
   dicesContext: IDicesContext;
   pulsesContext: IPulsesContext;
+  notesContext: INotesContext;
   currentPlayer: IPlayer;
   nextPlayer: (clockwise: -1 | 1) => void;
   memoDice: IDice;
@@ -44,7 +48,8 @@ export class InitialPositioningState implements IState {
     const { getPulse, updatePulse } = pulsesContext;
     const { updateDice } = dicesContext;
 
-    const mainAmount = getPulse("foreground")?.amount ?? 0;
+    // const mainAmount = getPulse("foreground")?.amount ?? 0;
+    const mainAmount = getPulse("foreground").amount;
     updatePulse("foreground", {
       amount: mainAmount < dice.value ? dice.value : mainAmount,
     });
@@ -99,7 +104,7 @@ class DefineObjectsState implements IState {
   public handleStepFinish(ctx: IContext) {
     const { setState } = ctx;
 
-    setState(new InvestigationRollState());
+    setState(new FirstPulsesRollState());
   }
 
   public draw(ctx: IContext) {
@@ -120,21 +125,15 @@ class DefineObjectsState implements IState {
     );
   }
 }
-//===============================================[ < InvestigationRollState > ]
-class InvestigationRollState implements IState {
+//=================================================[ < FirstPulsesRollState > ]
+class FirstPulsesRollState implements IState {
   public handleRollStop(ctx: IContext, dice: IDice) {
     const { dicesContext, setMemoDice, setState } = ctx;
     const { updateDice } = dicesContext;
 
     setMemoDice(dice);
     updateDice(dice.color, { value: dice.value });
-    setState(new InvestigationPulseState());
-  }
-
-  public handleStepFinish(ctx: IContext) {
-    const { setState } = ctx;
-
-    setState(this); // temporario
+    setState(new FirstPulsesDrawState());
   }
 
   public draw(ctx: IContext) {
@@ -153,13 +152,20 @@ class InvestigationRollState implements IState {
     );
   }
 }
-//==============================================[ < InvestigationPulseState > ]
-class InvestigationPulseState implements IState {
+//=================================================[ < FirstPulsesDrawState > ]
+class FirstPulsesDrawState implements IState {
   public handlePulseCreate(ctx: IContext) {
     const { nextPlayer, setState } = ctx;
 
+    setState(new FirstPulsesRollState());
+
     nextPlayer(-1);
-    setState(new InvestigationRollState());
+  }
+
+  public handleStepFinish(ctx: IContext) {
+    const { setState } = ctx;
+
+    setState(new DefineMainFactState());
   }
 
   public draw(ctx: IContext) {
@@ -174,6 +180,46 @@ class InvestigationPulseState implements IState {
           crossingTrackable
           dice={memoDice}
           onPulseCreated={() => this.handlePulseCreate(ctx)}
+        />
+      </>
+    );
+  }
+}
+//==================================================[ < DefineMainFactState > ]
+class DefineMainFactState implements IState {
+  public handleText(ctx: IContext, text: string) {
+    const { playersContext, nextPlayer, setState, memoDice } = ctx;
+    const { updatePlayer } = playersContext;
+
+    updatePlayer(memoDice.color, { object: text });
+
+    setState(new InitialPositioningState());
+
+    nextPlayer(1);
+  }
+
+  public handleStepFinish(ctx: IContext) {
+    const { setState } = ctx;
+
+    setState(new FirstPulsesRollState());
+  }
+
+  handleNote(ctx: IContext, note: INote) {}
+
+  public draw(ctx: IContext) {
+    const { pulsesContext } = ctx;
+    const { getPulse } = pulsesContext;
+
+    const pulse = getPulse("foreground");
+
+    return (
+      <>
+        <PulsesDisplayerLayer />
+        <DicesDisplayerLayer />
+        <NoteCreatorLayer
+          from={pulse.origin}
+          color={pulse.color}
+          onNote={(note) => this.handleNote(ctx, note)}
         />
       </>
     );

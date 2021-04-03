@@ -9,12 +9,14 @@ import { PulsesContext } from "../../contexts/PulsesContext";
 //--------------------------------------------------------------------< types >
 import { IDice } from "../../types/IDice";
 import { IState, IContext } from "./states";
+import { NotesContext } from "../../contexts/NotesContext";
 //===============================================================[ < Window > ]
 export function Window() {
   //-------------------------------------------------------------< properties >
   const playersContext = useContext(PlayersContext);
   const dicesContext = useContext(DicesContext);
   const pulsesContext = useContext(PulsesContext);
+  const notesContext = useContext(NotesContext);
   //---------------------------------------------------------------------------
   const [memoDice, setMemoDice] = useState<IDice>({} as IDice);
   const [state, setState] = useState<IState>(new InitialPositioningState());
@@ -26,6 +28,7 @@ export function Window() {
     dicesContext,
     pulsesContext,
     currentPlayer,
+    notesContext,
     nextPlayer,
     setState,
     memoDice,

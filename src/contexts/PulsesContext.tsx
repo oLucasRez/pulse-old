@@ -11,7 +11,7 @@ export interface IPulsesContext {
   pulses: IPulse[];
   addPulse: (pulse: IPulse) => void;
   updatePulse: (color: IColor, whatToUpdate: any) => void;
-  getPulse: (color: IColor) => IPulse | undefined;
+  getPulse: (color: IColor) => IPulse;
 }
 interface IProps {
   children: ReactNode;
@@ -33,7 +33,7 @@ export function PulsesProvider({ children }: IProps) {
   ]);
   //----------------------------------------------------------------< methods >
   function addPulse(pulse: IPulse) {
-    if (getPulse(pulse.color)) return;
+    if (getPulse(pulse.color) === ({} as IPulse)) return;
 
     const _pulses = [...pulses];
     _pulses.push(pulse);
@@ -58,7 +58,7 @@ export function PulsesProvider({ children }: IProps) {
   }
 
   function getPulse(color: IColor) {
-    return pulses.find((pulse) => pulse.color === color);
+    return pulses.find((pulse) => pulse.color === color) ?? ({} as IPulse);
   }
   //-----------------------------------------------------------------< return >
   console.log("pulses-provider rendered");

@@ -17,10 +17,14 @@ import "./styles.css";
 import { SVGProps, ReactNode, MouseEvent } from "react";
 import { ISVG } from "../../types/ISVG";
 import { IVector } from "../../types/IVector";
-export interface LayerProps extends SVGProps<ISVG> {
+interface IProps extends SVGProps<ISVG> {
   pulseTrackable?: boolean;
   crossingTrackable?: boolean;
   children?: ReactNode;
+}
+export interface LayerProps {
+  pulseTrackable?: boolean;
+  crossingTrackable?: boolean;
 }
 //================================================================[ < Layer > ]
 export function Layer({
@@ -29,7 +33,7 @@ export function Layer({
   children,
   onMouseMove,
   ...props
-}: LayerProps) {
+}: IProps) {
   //-------------------------------------------------------------< properties >
   const { crossings } = useContext(CrossingsContext);
   const { pulses } = useContext(PulsesContext);

@@ -8,6 +8,7 @@ export interface TextProps {
   font: "cursive light" | "cursive bold" | "sansserif regular";
   size: number;
   justify?: "start" | "middle" | "end";
+  shadow?: boolean;
   children: ReactNode;
 }
 //-------------------------------------------------------------------< global >
@@ -26,23 +27,40 @@ export function Text({
   font,
   size,
   justify,
+  shadow,
   children,
 }: TextProps) {
   //-------------------------------------------------------------< properties >
   const [fontFamily, fontWeight] = font.split(" ");
   //-----------------------------------------------------------------< return >
   return (
-    <text
-      x={origin.x}
-      y={origin.y}
-      fill={fill ? `var(--${fill})` : undefined}
-      fontFamily={dict[fontFamily]}
-      fontWeight={dict[fontWeight]}
-      fontSize={size}
-      textAnchor={justify ?? "start"}
-      dominantBaseline="middle"
-    >
-      {children}
-    </text>
+    <g>
+      {shadow && (
+        <text
+          {...origin}
+          strokeWidth={5}
+          stroke={`var(--background)`}
+          fill="none"
+          fontFamily={dict[fontFamily]}
+          fontWeight={dict[fontWeight]}
+          fontSize={size}
+          textAnchor={justify ?? "start"}
+          dominantBaseline="middle"
+        >
+          {children}
+        </text>
+      )}
+      <text
+        {...origin}
+        fill={fill ? `var(--${fill})` : undefined}
+        fontFamily={dict[fontFamily]}
+        fontWeight={dict[fontWeight]}
+        fontSize={size}
+        textAnchor={justify ?? "start"}
+        dominantBaseline="middle"
+      >
+        {children}
+      </text>
+    </g>
   );
 }

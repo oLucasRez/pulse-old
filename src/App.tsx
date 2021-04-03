@@ -5,7 +5,7 @@ import { PlayersProvider } from "./contexts/PlayersContext";
 import { CrossingsProvider } from "./contexts/CrossingsContext";
 import { PulsesProvider } from "./contexts/PulsesContext";
 import { DicesProvider } from "./contexts/DicesContext";
-// import { GameProvider } from "./contexts/GameContext";
+import { NotesProvider } from "./contexts/NotesContext";
 //==================================================================[ < App > ]
 function App() {
   //-----------------------------------------------------------------< return >
@@ -15,9 +15,9 @@ function App() {
         <CrossingsProvider>
           <PulsesProvider>
             <DicesProvider>
-              {/* <GameProvider> */}
-              <Window />
-              {/* </GameProvider> */}
+              <NotesProvider>
+                <Window />
+              </NotesProvider>
             </DicesProvider>
           </PulsesProvider>
         </CrossingsProvider>

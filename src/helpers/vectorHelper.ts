@@ -46,6 +46,34 @@ export function norm(vector: IVector): IVector {
   return { x: Math.cos(angle), y: Math.sin(angle) };
 }
 //-----------------------------------------------------------------------------
+export function avg(vector1: IVector, vector2: IVector): IVector {
+  const x = (vector1.x + vector2.x) / 2;
+  const y = (vector1.y + vector2.y) / 2;
+
+  return { x, y };
+}
+//-----------------------------------------------------------------------------
+export function rotate(vector: IVector, angle: number): IVector {
+  const x = Math.cos(angle) * vector.x - Math.sin(angle) * vector.y;
+  const y = Math.sin(angle) * vector.x + Math.cos(angle) * vector.y;
+
+  return { x, y };
+}
+//-----------------------------------------------------------------------------
+export function angle(vector: IVector): number {
+  return Math.atan2(vector.y, vector.x);
+}
+//-----------------------------------------------------------------------------
+export function quadrant(
+  vector: IVector,
+  origin: IVector
+): { vertical: "top" | "bottom"; horizontal: "left" | "right" } {
+  return {
+    vertical: vector.y < origin.y ? "top" : "bottom",
+    horizontal: vector.x < origin.x ? "left" : "right",
+  };
+}
+//-----------------------------------------------------------------------------
 export const zero: IVector = { x: 0, y: 0 };
 //-----------------------------------------------------------------------------
 export const max: IVector = { x: window.innerWidth, y: window.innerHeight };

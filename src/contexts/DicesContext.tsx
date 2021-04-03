@@ -3,26 +3,18 @@ import { useState } from "react";
 //-----------------------------------------------------------------< contexts >
 import { createContext } from "react";
 //--------------------------------------------------------------------< types >
-import { IDispatcher } from "../types/IDispatcher";
 import { ReactNode } from "react";
 import { IDice } from "../types/IDice";
-import { IPlayer } from "../types/IPlayer";
-import { IVector } from "../types/IVector";
 import { IColor } from "../types/IColor";
 export interface IDicesContext {
   dices: IDice[];
   addDice: (dice: IDice) => void;
-  // getDiceByPlayer: (player: IPlayer) => IDice;
   getDice: (color: IColor) => IDice;
   updateDice: (color: IColor, whatToUpdate: any) => void;
 }
 interface IProps {
   children: ReactNode;
 }
-// interface WhatToUpdate {
-//   origin?: IVector;
-//   value?: number;
-// }
 //-------------------------------------------------------------------< global >
 export const DicesContext = createContext({} as IDicesContext);
 //========================================================[ < DicesProvider > ]
