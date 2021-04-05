@@ -22,7 +22,7 @@ export function Label({ children, origin, fill, ...props }: TextProps) {
       />
       <Text
         {...props}
-        shadow
+        shadow={isHover}
         origin={sum(origin, { x: 36, y: 0 })}
         fill={isHover ? fill : "line"}
       >

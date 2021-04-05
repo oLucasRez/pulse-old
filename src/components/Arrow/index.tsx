@@ -37,7 +37,7 @@ export function Arrow({ arrow }: IProps) {
       const { x, y } = sum(to, rotate(point, angle(sub(bezier, to))));
       d += `${x} ${y} `;
     });
-    return d + "Z";
+    return d;
   }
 
   function p({ x, y }: IVector) {
@@ -48,19 +48,21 @@ export function Arrow({ arrow }: IProps) {
     <g>
       <path
         d={path([
-          { x: 0, y: 0 },
-          { x: 12, y: -4 },
-          { x: 12, y: 4 },
+          { x: 7, y: -6 },
+          { x: -7, y: 0 },
+          { x: 7, y: 6 },
         ])}
-        fill={`var(--${color})`}
+        fill="transparent"
         stroke={`var(--${color})`}
         strokeWidth="2"
         strokeLinejoin="round"
+        strokeLinecap="round"
       />
       <path
-        strokeWidth="1"
         d={`M ${p(from)} Q ${p(bezier)} ${p(to)}`}
         stroke={`var(--${color})`}
+        strokeWidth="2"
+        strokeLinecap="round"
         fill="transparent"
       />
     </g>

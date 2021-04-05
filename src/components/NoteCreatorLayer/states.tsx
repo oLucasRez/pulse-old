@@ -9,8 +9,7 @@ import { IDispatcher } from "../../types/IDispatcher";
 import { INote } from "../../types/INote";
 export interface IContext {
   from: IVector;
-  to: IVector;
-  setTo: IDispatcher<IVector>;
+  toState: [IVector, IDispatcher<IVector>];
   color: IColor;
   max?: number;
   onNote: (note: INote) => void;
@@ -24,7 +23,8 @@ export interface IState {
 //===========================================================[ < ArrowState > ]
 export class ArrowState implements IState {
   public handleMove(ctx: IContext, e: MouseEvent<ISVG>) {
-    const { setTo } = ctx;
+    const { toState } = ctx;
+    const [, setTo] = toState;
 
     setTo({ x: e.clientX, y: e.clientY });
   }
@@ -36,7 +36,8 @@ export class ArrowState implements IState {
   }
 
   public draw(ctx: IContext) {
-    const { from, to, color, max } = ctx;
+    const { from, toState, color, max } = ctx;
+    const [to] = toState;
 
     return (
       <>
@@ -49,7 +50,8 @@ export class ArrowState implements IState {
 //============================================================[ < TextState > ]
 export class TextState implements IState {
   handleText(ctx: IContext, text: string) {
-    const { from, to, onNote, color, setState } = ctx;
+    const { from, toState, onNote, color, setState } = ctx;
+    const [to] = toState;
 
     onNote({
       arrow: {
@@ -65,7 +67,8 @@ export class TextState implements IState {
   }
 
   public draw(ctx: IContext) {
-    const { from, to, color, max } = ctx;
+    const { from, toState, color, max } = ctx;
+    const [to] = toState;
 
     return (
       <>

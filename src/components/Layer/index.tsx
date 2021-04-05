@@ -1,3 +1,4 @@
+import { Note } from "../Note";
 //---------------------------------------------------------------< components >
 import { Circle } from "../SVGComponents/Circle";
 import { Label } from "../Label";
@@ -17,6 +18,8 @@ import "./styles.css";
 import { SVGProps, ReactNode, MouseEvent } from "react";
 import { ISVG } from "../../types/ISVG";
 import { IVector } from "../../types/IVector";
+import { NotesContext } from "../../contexts/NotesContext";
+import { useTextWidth } from "@imagemarker/use-text-width";
 interface IProps extends SVGProps<ISVG> {
   pulseTrackable?: boolean;
   crossingTrackable?: boolean;
@@ -38,6 +41,7 @@ export function Layer({
   const { crossings } = useContext(CrossingsContext);
   const { pulses } = useContext(PulsesContext);
   const { players } = useContext(PlayersContext);
+  const { notes } = useContext(NotesContext);
   const { getDice } = useContext(DicesContext);
   //---------------------------------------------------------------------------
   const [cursor, setCursor] = useState<IVector>(zero);
@@ -92,6 +96,65 @@ export function Layer({
           </g>
         );
       })}
+
+      {/* {notes.map((note, index) => (
+        <Note key={index} note={note} />
+      ))} */}
+
+      <Note
+        note={{
+          arrow: {
+            from: { x: 500, y: 500 },
+            to: { x: 700, y: 300 },
+            color: "pink",
+          },
+          question: { color: "pink", text: "Por que o cara não atirou?" },
+          answers: [
+            {
+              color: "blue",
+              text: "Porque o cara é brabo",
+            },
+            {
+              color: "red",
+              text: "Porque ele tinha um problema na mão, era raquítico",
+            },
+            {
+              color: "yellow",
+              text: "Porque era o irmão dele, dado como morto há muito tempo",
+            },
+          ],
+          fact: 1,
+        }}
+      />
+
+      <Note
+        note={{
+          arrow: {
+            from: { x: 600, y: 600 },
+            to: { x: 300, y: 600 },
+            color: "pink",
+          },
+          question: {
+            color: "pink",
+            text: "Por que o cara não atirou bla bla bla bla bla bla?",
+          },
+          answers: [
+            {
+              color: "blue",
+              text: "Porque o cara é brabo",
+            },
+            {
+              color: "red",
+              text: "Porque ele tinha um problema na mão, era raquítico",
+            },
+            {
+              color: "yellow",
+              text: "Porque era o irmão dele, dado como morto há muito tempo",
+            },
+          ],
+          fact: 1,
+        }}
+      />
     </svg>
   );
 }

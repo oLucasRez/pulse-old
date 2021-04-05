@@ -4,6 +4,7 @@ import { PulsesDisplayerLayer } from "../PulsesDisplayerLayer";
 import { TextareaLayer } from "../TextareaLayer";
 import { DiceRollerLayer } from "../DiceRollerLayer";
 import { PulseCreatorLayer } from "../PulseCreatorLayer";
+import { NoteCreatorLayer } from "../NoteCreatorLayer";
 //------------------------------------------------------------------< helpers >
 import { mult, norm, sub, sum, zero } from "../../helpers/vectorHelper";
 //--------------------------------------------------------------------< types >
@@ -14,9 +15,9 @@ import { IPlayer } from "../../types/IPlayer";
 import { IDice } from "../../types/IDice";
 import { IDispatcher } from "../../types/IDispatcher";
 import { IPulse } from "../../types/IPulse";
-import { NoteCreatorLayer } from "../NoteCreatorLayer";
 import { INote } from "../../types/INote";
 import { INotesContext } from "../../contexts/NotesContext";
+import { Note } from "../Note";
 export interface IContext {
   playersContext: IPlayersContext;
   dicesContext: IDicesContext;
@@ -48,7 +49,6 @@ export class InitialPositioningState implements IState {
     const { getPulse, updatePulse } = pulsesContext;
     const { updateDice } = dicesContext;
 
-    // const mainAmount = getPulse("foreground")?.amount ?? 0;
     const mainAmount = getPulse("foreground").amount;
     updatePulse("foreground", {
       amount: mainAmount < dice.value ? dice.value : mainAmount,
@@ -79,11 +79,11 @@ export class InitialPositioningState implements IState {
     return (
       <>
         <PulsesDisplayerLayer />
-        <DicesDisplayerLayer />
+        {/* <DicesDisplayerLayer />
         <DiceRollerLayer
           dice={getDice(currentPlayer.color)}
           onRollStop={(dice) => this.handleRollStop(ctx, dice)}
-        />
+        /> */}
       </>
     );
   }
@@ -204,7 +204,13 @@ class DefineMainFactState implements IState {
     setState(new FirstPulsesRollState());
   }
 
-  handleNote(ctx: IContext, note: INote) {}
+  handleNote(ctx: IContext, note: INote) {
+    const { notesContext, setState } = ctx;
+    const { addNote } = notesContext;
+
+    addNote(note);
+    setState(new InvestigationState());
+  }
 
   public draw(ctx: IContext) {
     const { pulsesContext } = ctx;
@@ -221,6 +227,17 @@ class DefineMainFactState implements IState {
           color={pulse.color}
           onNote={(note) => this.handleNote(ctx, note)}
         />
+      </>
+    );
+  }
+}
+//===================================================[ < InvestigationState > ]
+class InvestigationState implements IState {
+  public draw() {
+    return (
+      <>
+        <PulsesDisplayerLayer />
+        <DicesDisplayerLayer />
       </>
     );
   }

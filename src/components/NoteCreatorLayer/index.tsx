@@ -1,14 +1,17 @@
+//------------------------------------------------------------------< classes >
+import { ArrowState } from "./states";
 //---------------------------------------------------------------< components >
-import { Layer, LayerProps } from "../Layer";
+import { Layer } from "../Layer";
 //--------------------------------------------------------------------< hooks >
 import { useState } from "react";
 //--------------------------------------------------------------------< types >
+import { LayerProps } from "../Layer";
 import { IVector } from "../../types/IVector";
+import { IColor } from "../../types/IColor";
+import { INote } from "../../types/INote";
 import { MouseEvent } from "react";
 import { ISVG } from "../../types/ISVG";
-import { IColor } from "../../types/IColor";
-import { ArrowState, IContext, IState } from "./states";
-import { INote } from "../../types/INote";
+import { IState, IContext } from "./states";
 interface IProps extends LayerProps {
   from: IVector;
   color: IColor;
@@ -24,10 +27,10 @@ export function NoteCreatorLayer({
   ...props
 }: IProps) {
   //-------------------------------------------------------------< properties >
-  const [to, setTo] = useState(from);
+  const toState = useState(from);
   const [state, setState] = useState<IState>(new ArrowState());
   //---------------------------------------------------------------------------
-  const _this: IContext = { from, to, setTo, color, max, onNote, setState };
+  const _this: IContext = { from, toState, color, max, onNote, setState };
   //----------------------------------------------------------------< methods >
   function handleMove(e: MouseEvent<ISVG>) {
     if (state.handleMove) state.handleMove(_this, e);
