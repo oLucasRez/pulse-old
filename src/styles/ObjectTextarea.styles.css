@@ -1,0 +1,64 @@
+.object-textarea > .container {
+  width: 20rem;
+  height: 5rem;
+
+  position: absolute;
+  display: grid;
+  align-items: center;
+  grid-template-columns: auto max-content;
+  gap: 1rem;
+
+  transform: translate(2rem, -2.5rem);
+}
+
+.object-textarea > .container .input {
+  height: 5rem;
+  padding: 0.5rem;
+
+  resize: none;
+  overflow: hidden;
+
+  border: none;
+  background: #00000011;
+  font-size: 1.25rem;
+  line-height: 2rem;
+}
+
+.object-textarea > .container .input:is(:hover, :focus) {
+  background: #00000022;
+}
+
+.object-textarea > .container .input:focus {
+  outline: none;
+}
+
+.object-textarea > .container span {
+  bottom: 0.25rem;
+  right: 3.5rem;
+
+  position: absolute;
+
+  font-size: 0.75rem;
+  font-family: "Rubik";
+  font-weight: 300;
+}
+
+.object-textarea > .container svg {
+  width: 2rem;
+  height: 2rem;
+}
+
+.object-textarea > .container .enabled {
+  width: 2rem;
+  height: 2rem;
+
+  cursor: pointer;
+}
+
+.object-textarea > .container .enabled:not(:hover) {
+  color: var(--line) !important;
+}
+
+.object-textarea > .container .disabled {
+  color: var(--line) !important;
+}

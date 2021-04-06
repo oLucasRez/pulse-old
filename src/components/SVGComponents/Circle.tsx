@@ -1,18 +1,19 @@
 //--------------------------------------------------------------------< types >
-import { IVector } from "../../types/IVector";
-import { IColor } from "../../types/IColor";
+import { Vector } from "../../types/Vector.type";
+import { Color } from "../../types/Color.type";
 import { MouseEvent } from "react";
-import { ICircle } from "../../types/ICircle";
+import { Circle as CircleType } from "../../types/Circle.type";
+
 interface IProps {
   type?: "center" | "display" | "main" | "hover";
-  origin: IVector;
+  origin: Vector;
   radius?: number;
-  fill?: IColor;
-  stroke?: IColor;
-  onClick?: (e: MouseEvent<ICircle>) => void;
-  onMove?: (e: MouseEvent<ICircle>) => void;
-  onEnter?: (e: MouseEvent<ICircle>) => void;
-  onOut?: (e: MouseEvent<ICircle>) => void;
+  fill?: Color;
+  stroke?: Color;
+  onClick?: (e: MouseEvent<CircleType>) => void;
+  onMove?: (e: MouseEvent<CircleType>) => void;
+  onEnter?: (e: MouseEvent<CircleType>) => void;
+  onOut?: (e: MouseEvent<CircleType>) => void;
 }
 //===============================================================[ < Circle > ]
 export function Circle({

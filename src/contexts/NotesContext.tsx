@@ -3,59 +3,61 @@ import { useState } from "react";
 //-----------------------------------------------------------------< contexts >
 import { createContext } from "react";
 //--------------------------------------------------------------------< types >
+import { Note } from "../types/Note.type";
+import { Vector } from "../types/Vector.type";
+import { Text } from "../types/Text.type";
 import { ReactNode } from "react";
-import { INote } from "../types/INote";
-import { IText } from "../types/IText";
-import { IVector } from "../types/IVector";
-export interface INotesContext {
-  notes: INote[];
-  addNote: (note: INote) => void;
-  getNote: (from: IVector) => INote | undefined;
-  addAnswer: (from: IVector, answer: IText) => void;
-  defineFact: (from: IVector, fact: number) => void;
+
+export interface NotesContextData {
+  notes: Note[];
+  getNote: (from: Vector) => Note | undefined;
+  addNote: (note: Note) => void;
+  addAnswer: (from: Vector, answer: Text) => void;
+  defineFact: (from: Vector, fact: number) => void;
 }
-interface IProps {
+
+interface Props {
   children: ReactNode;
 }
 //-------------------------------------------------------------------< global >
-export const NotesContext = createContext({} as INotesContext);
+export const NotesContext = createContext({} as NotesContextData);
 //========================================================[ < NotesProvider > ]
-export function NotesProvider({ children }: IProps) {
+export function NotesProvider({ children }: Props) {
   //-------------------------------------------------------------< properties >
-  const [notes, setNotes] = useState<INote[]>([]);
+  const [notes, setNotes] = useState<Note[]>([]);
   //----------------------------------------------------------------< methods >
-  function addNote(note: INote) {
+  function getNote(from: Vector) {
+    return notes.find((note) => note.arrow.from === from);
+  }
+
+  function addNote(note: Note) {
     if (getNote(note.arrow.from)) return;
 
     setNotes([...notes, note]);
   }
 
-  function getNote(from: IVector) {
-    return notes.find((note) => note.arrow.from === from);
-  }
-
-  function addAnswer(from: IVector, answer: IText) {
+  function addAnswer(from: Vector, answer: Text) {
     const note = getNote(from);
     if (!note) return;
 
     updateNote(from, { answer: [...note.answers, answer] });
   }
 
-  function defineFact(from: IVector, fact: number) {
+  function defineFact(from: Vector, fact: number) {
     const note = getNote(from);
     if (!note || fact < 0 || fact >= note.answers.length) return;
 
     updateNote(note.arrow.from, { fact });
   }
 
-  function updateNote(from: IVector, whatToUpdate: any) {
+  function updateNote(from: Vector, { arrow, question, answers, fact }: any) {
     const _notes = notes.map((note) => {
       if (note.arrow.from === from)
         return {
-          arrow: whatToUpdate.arrow ?? note.arrow,
-          question: whatToUpdate.question ?? note.question,
-          answers: whatToUpdate.answers ?? note.answers,
-          fact: whatToUpdate.fact ?? note.fact,
+          arrow: arrow ?? note.arrow,
+          question: question ?? note.question,
+          answers: answers ?? note.answers,
+          fact: fact ?? note.fact,
         };
       else return note;
     });
@@ -66,7 +68,7 @@ export function NotesProvider({ children }: IProps) {
   console.log("notes-provider rendered");
   return (
     <NotesContext.Provider
-      value={{ notes, addNote, getNote, addAnswer, defineFact }}
+      value={{ notes, getNote, addNote, addAnswer, defineFact }}
     >
       {children}
     </NotesContext.Provider>

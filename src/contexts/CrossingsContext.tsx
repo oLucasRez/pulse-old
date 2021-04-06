@@ -1,46 +1,49 @@
 //------------------------------------------------------------------< helpers >
-import { mod, sub, sum, mult } from "../helpers/vectorHelper";
+import { mod, sub } from "../helpers/Vector.helper";
+import { calcCrossings, includes } from "../helpers/CrossingsContext.helper";
 //--------------------------------------------------------------------< hooks >
 import { useState } from "react";
 //-----------------------------------------------------------------< contexts >
 import { createContext } from "react";
 //--------------------------------------------------------------------< types >
-import { IVector } from "../types/IVector";
-import { IPulse } from "../types/IPulse";
+import { Vector } from "../types/Vector.type";
+import { Pulse } from "../types/Pulse.type";
 import { ReactNode } from "react";
-interface IData {
-  crossings: IVector[];
-  addNewCrossings: (pulse: IPulse, pulses: IPulse[]) => void;
+
+interface Data {
+  crossings: Vector[];
+  addNewCrossings: (pulse: Pulse, pulses: Pulse[]) => void;
 }
-interface IProps {
+
+interface Props {
   children: ReactNode;
 }
 //-------------------------------------------------------------------< global >
-export const CrossingsContext = createContext({} as IData);
+export const CrossingsContext = createContext({} as Data);
 //====================================================[ < CrossingsProvider > ]
-export function CrossingsProvider({ children }: IProps) {
+export function CrossingsProvider({ children }: Props) {
   //-------------------------------------------------------------< properties >
-  const [crossings, setCrossings] = useState<IVector[]>([]);
+  const [crossings, setCrossings] = useState<Vector[]>([]);
   //----------------------------------------------------------------< methods >
-  function addNewCrossings(pulse: IPulse, pulses: IPulse[]) {
-    const _crossings: IVector[] = [];
+  function addNewCrossings(pulse: Pulse, pulses: Pulse[]) {
+    const _crossings: Vector[] = [];
 
-    for (let j = 0; j < pulses.length; j++) {
-      if (pulse === pulses[j]) continue;
+    for (let i = 0; i < pulses.length; i++) {
+      if (pulse === pulses[i]) continue;
 
       const current = pulse;
-      const target = pulses[j];
+      const target = pulses[i];
 
       const distBetween = mod(sub(current.origin, target.origin));
 
-      for (let k = 1; k <= current.amount; k++) {
-        for (let l = 1; l <= target.amount; l++) {
-          if (distBetween < current.gap * k + target.gap * l) {
+      for (let j = 1; j <= current.amount; j++) {
+        for (let k = 1; k <= target.amount; k++) {
+          if (distBetween < current.gap * j + target.gap * k) {
             const [crossing1, crossing2] = calcCrossings(
               current.origin,
               current.gap * k,
               target.origin,
-              target.gap * l
+              target.gap * k
             );
 
             if (!isNaN(crossing1.x)) {
@@ -53,37 +56,6 @@ export function CrossingsProvider({ children }: IProps) {
     }
 
     setCrossings([...crossings, ..._crossings]);
-  }
-  //---------------------------------------------------------------------------
-  function calcCrossings(
-    c1: IVector,
-    r1: number,
-    c2: IVector,
-    r2: number
-  ): IVector[] {
-    const d = mod(sub(c1, c2));
-    const a = (r1 * r1 - r2 * r2 + d * d) / (2 * d);
-    const h = Math.sqrt(r1 * r1 - a * a);
-    const p3 = sum(c1, mult(sub(c2, c1), a / d));
-
-    const crossing1 = {
-      x: p3.x + ((c2.y - c1.y) * h) / d,
-      y: p3.y - ((c2.x - c1.x) * h) / d,
-    };
-    const crossing2 = {
-      x: p3.x - ((c2.y - c1.y) * h) / d,
-      y: p3.y + ((c2.x - c1.x) * h) / d,
-    };
-
-    return [crossing1, crossing2];
-  }
-
-  function includes(crossing: IVector, crossings: IVector[]) {
-    return !crossings.filter(
-      (_crossing) =>
-        Math.floor(crossing.x) === Math.floor(_crossing.x) &&
-        Math.floor(crossing.y) === Math.floor(_crossing.y)
-    ).length;
   }
   //-----------------------------------------------------------------< return >
   console.log("crossings-provider rendered");

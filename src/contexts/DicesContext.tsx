@@ -3,24 +3,26 @@ import { useState } from "react";
 //-----------------------------------------------------------------< contexts >
 import { createContext } from "react";
 //--------------------------------------------------------------------< types >
+import { Dice } from "../types/Dice.type";
+import { Color } from "../types/Color.type";
 import { ReactNode } from "react";
-import { IDice } from "../types/IDice";
-import { IColor } from "../types/IColor";
-export interface IDicesContext {
-  dices: IDice[];
-  addDice: (dice: IDice) => void;
-  getDice: (color: IColor) => IDice;
-  updateDice: (color: IColor, whatToUpdate: any) => void;
+
+export interface DicesContextData {
+  dices: Dice[];
+  getDice: (color: Color) => Dice;
+  addDice: (dice: Dice) => void;
+  updateDice: (color: Color, whatToUpdate: any) => void;
 }
-interface IProps {
+
+interface Props {
   children: ReactNode;
 }
 //-------------------------------------------------------------------< global >
-export const DicesContext = createContext({} as IDicesContext);
+export const DicesContext = createContext({} as DicesContextData);
 //========================================================[ < DicesProvider > ]
-export function DicesProvider({ children }: IProps) {
+export function DicesProvider({ children }: Props) {
   //-------------------------------------------------------------< properties >
-  const [dices, setDices] = useState<IDice[]>([
+  const [dices, setDices] = useState<Dice[]>([
     {
       color: "orange",
       value: 0,
@@ -38,15 +40,15 @@ export function DicesProvider({ children }: IProps) {
     },
   ]);
   //----------------------------------------------------------------< methods >
-  function addDice(dice: IDice) {
+  function getDice(color: Color) {
+    return dices.find((dice) => dice.color === color) ?? ({} as Dice);
+  }
+
+  function addDice(dice: Dice) {
     setDices([...dices, dice]);
   }
 
-  function getDice(color: IColor) {
-    return dices.find((dice) => dice.color === color) ?? ({} as IDice);
-  }
-
-  function updateDice(color: IColor, { origin, value }: any) {
+  function updateDice(color: Color, { origin, value }: any) {
     const _dices = dices.map((dice) => {
       if (dice.color === color)
         return {
@@ -62,7 +64,7 @@ export function DicesProvider({ children }: IProps) {
   //-----------------------------------------------------------------< return >
   console.log("dices-provider rendered");
   return (
-    <DicesContext.Provider value={{ dices, addDice, getDice, updateDice }}>
+    <DicesContext.Provider value={{ dices, getDice, addDice, updateDice }}>
       {children}
     </DicesContext.Provider>
   );

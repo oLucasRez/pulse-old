@@ -4,26 +4,28 @@ import { useContext, useState } from "react";
 import { createContext } from "react";
 import { CrossingsContext } from "./CrossingsContext";
 //--------------------------------------------------------------------< types >
-import { IPulse } from "../types/IPulse";
-import { IColor } from "../types/IColor";
+import { Pulse } from "../types/Pulse.type";
+import { Color } from "../types/Color.type";
 import { ReactNode } from "react";
-export interface IPulsesContext {
-  pulses: IPulse[];
-  addPulse: (pulse: IPulse) => void;
-  updatePulse: (color: IColor, whatToUpdate: any) => void;
-  getPulse: (color: IColor) => IPulse;
+
+export interface PulsesContextData {
+  pulses: Pulse[];
+  addPulse: (pulse: Pulse) => void;
+  updatePulse: (color: Color, whatToUpdate: any) => void;
+  getPulse: (color: Color) => Pulse;
 }
-interface IProps {
+
+interface Props {
   children: ReactNode;
 }
 //-------------------------------------------------------------------< global >
-export const PulsesContext = createContext({} as IPulsesContext);
+export const PulsesContext = createContext({} as PulsesContextData);
 //=======================================================[ < PulsesProvider > ]
-export function PulsesProvider({ children }: IProps) {
+export function PulsesProvider({ children }: Props) {
   //-------------------------------------------------------------< properties >
   const { addNewCrossings } = useContext(CrossingsContext);
   //---------------------------------------------------------------------------
-  const [pulses, setPulses] = useState<IPulse[]>([
+  const [pulses, setPulses] = useState<Pulse[]>([
     {
       origin: { x: window.innerWidth / 2, y: window.innerHeight / 2 },
       amount: 0,
@@ -32,8 +34,8 @@ export function PulsesProvider({ children }: IProps) {
     },
   ]);
   //----------------------------------------------------------------< methods >
-  function addPulse(pulse: IPulse) {
-    if (getPulse(pulse.color) === ({} as IPulse)) return;
+  function addPulse(pulse: Pulse) {
+    if (getPulse(pulse.color) === ({} as Pulse)) return;
 
     const _pulses = [...pulses];
     _pulses.push(pulse);
@@ -42,7 +44,7 @@ export function PulsesProvider({ children }: IProps) {
     addNewCrossings(pulse, _pulses);
   }
 
-  function updatePulse(color: IColor, whatToUpdate: any) {
+  function updatePulse(color: Color, whatToUpdate: any) {
     const _pulses = pulses.map((pulse) => {
       if (pulse.color === color)
         return {
@@ -57,8 +59,8 @@ export function PulsesProvider({ children }: IProps) {
     setPulses(_pulses);
   }
 
-  function getPulse(color: IColor) {
-    return pulses.find((pulse) => pulse.color === color) ?? ({} as IPulse);
+  function getPulse(color: Color) {
+    return pulses.find((pulse) => pulse.color === color) ?? ({} as Pulse);
   }
   //-----------------------------------------------------------------< return >
   console.log("pulses-provider rendered");

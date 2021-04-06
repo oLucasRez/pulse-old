@@ -1,11 +1,11 @@
 //--------------------------------------------------------------------< types >
-import { IVector } from "../../types/IVector";
-import { IColor } from "../../types/IColor";
+import { Vector } from "../../types/Vector.type";
+import { Color } from "../../types/Color.type";
 interface IProps {
-  from: IVector;
-  to: IVector;
-  fill?: IColor;
-  stroke?: IColor;
+  from: Vector;
+  to: Vector;
+  fill?: Color;
+  stroke?: Color;
 }
 //=================================================================[ < Line > ]
 export function Line({ from, to, fill, stroke }: IProps) {

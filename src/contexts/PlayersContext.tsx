@@ -3,22 +3,24 @@ import { useState } from "react";
 //-----------------------------------------------------------------< contexts >
 import { createContext } from "react";
 //--------------------------------------------------------------------< types >
-import { IPlayer } from "../types/IPlayer";
+import { Player } from "../types/Player.type";
+import { Color } from "../types/Color.type";
 import { ReactNode } from "react";
-import { IColor } from "../types/IColor";
-export interface IPlayersContext {
-  players: IPlayer[];
-  updatePlayer: (color: IColor, whatToUpdate: any) => void;
+
+export interface PlayersContextData {
+  players: Player[];
+  updatePlayer: (color: Color, whatToUpdate: any) => void;
 }
-interface IProps {
+
+interface Props {
   children: ReactNode;
 }
 //-------------------------------------------------------------------< global >
-export const PlayersContext = createContext({} as IPlayersContext);
+export const PlayersContext = createContext({} as PlayersContextData);
 //======================================================[ < PlayersProvider > ]
-export function PlayersProvider({ children }: IProps) {
+export function PlayersProvider({ children }: Props) {
   //-------------------------------------------------------------< properties >
-  const [players, setPlayers] = useState<IPlayer[]>([
+  const [players, setPlayers] = useState<Player[]>([
     {
       object: "",
       color: "orange",
@@ -33,7 +35,7 @@ export function PlayersProvider({ children }: IProps) {
     },
   ]);
   //----------------------------------------------------------------< methods >
-  function updatePlayer(color: IColor, whatToUpdate: any) {
+  function updatePlayer(color: Color, whatToUpdate: any) {
     const _players = players.map((player) => {
       if (player.color === color)
         return {
