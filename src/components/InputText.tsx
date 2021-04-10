@@ -13,11 +13,12 @@ import { Textarea } from "../types/Textarea.type";
 interface IProps {
   origin: Vector;
   color: Color;
+  value?: string;
   max?: number;
   onText?: (text: string) => void;
 }
 //============================================================[ < InputText > ]
-export function InputText({ origin, color, max = 300, onText }: IProps) {
+export function InputText({ origin, color, value, max = 300, onText }: IProps) {
   //-------------------------------------------------------------< properties >
   const { horizontal } = quad(origin, {
     x: window.innerWidth / 2,
@@ -29,7 +30,7 @@ export function InputText({ origin, color, max = 300, onText }: IProps) {
     (horizontal === "left" ? origin.x : window.innerWidth - origin.x) - padding;
   const height = area / width;
   //---------------------------------------------------------------------------
-  const [text, setText] = useState("");
+  const [text, setText] = useState(value ?? "");
   //----------------------------------------------------------------< methods >
   function handleInput(e: ChangeEvent<Textarea>) {
     setText(e.target.value);
@@ -61,6 +62,7 @@ export function InputText({ origin, color, max = 300, onText }: IProps) {
           maxLength={max}
           onChange={handleInput}
           onKeyPress={handleEnter}
+          value={text}
           style={{
             width: `${width}px`,
             height: `${height}px`,

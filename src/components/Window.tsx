@@ -1,46 +1,26 @@
-//------------------------------------------------------------------< classes >
-import { InitialPositioningState } from "../classes/WindowStates/InitialPositioningState";
+//---------------------------------------------------------------< interfaces >
+import { WindowState, WindowContext } from "../interfaces/Window";
+//--------------------------------------------------------------------< cruds >
+import { Players as PlayersCRUD } from "../cruds/Players.crud";
+//-------------------------------------------------------------------< states >
+import { Setup } from "../states/Window/Setup.state";
 //--------------------------------------------------------------------< hooks >
 import { useContext, useState } from "react";
-//-----------------------------------------------------------------< contexts >
-import { PlayersContext } from "../contexts/PlayersContext";
-import { DicesContext } from "../contexts/DicesContext";
-import { PulsesContext } from "../contexts/PulsesContext";
-//--------------------------------------------------------------------< types >
-import { WindowState, WindowContext } from "../classes/WindowStates";
-import { NotesContext } from "../contexts/NotesContext";
 //===============================================================[ < Window > ]
 export function Window() {
   //-------------------------------------------------------------< properties >
-  const playersContext = useContext(PlayersContext);
-  const dicesContext = useContext(DicesContext);
-  const pulsesContext = useContext(PulsesContext);
-  const notesContext = useContext(NotesContext);
+  const { players } = useContext(PlayersCRUD);
   //---------------------------------------------------------------------------
-  const [state, setState] = useState<WindowState>(
-    new InitialPositioningState()
-  );
   const [current, setCurrent] = useState(0);
-
-  const currentPlayer = playersContext.players[current];
+  const [state, setState] = useState<WindowState>(new Setup());
   //---------------------------------------------------------------------------
-  const _this: WindowContext = {
-    playersContext,
-    dicesContext,
-    pulsesContext,
-    currentPlayer,
-    notesContext,
-    nextPlayer,
-    setState,
-  };
+  const currentPlayer = players[current];
+  const _this: WindowContext = { currentPlayer, nextPlayer, setState };
   //----------------------------------------------------------------< methods >
   function nextPlayer(clockwise: -1 | 1) {
     const next = current + clockwise;
-    if (
-      (next < 0 || next >= playersContext.players.length) &&
-      state.handleStepFinish
-    )
-      state.handleStepFinish(_this);
+
+    if (next < 0 || next >= players.length) state.nextStep(_this);
     else setCurrent(next);
   }
   //-----------------------------------------------------------------< return >

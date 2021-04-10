@@ -1,12 +1,12 @@
 //---------------------------------------------------------------< components >
-import { Circle } from "./SVGComponents/Circle";
-import { Text } from "./SVGComponents/Text";
+import { Circle } from "../tags/Circle.tag";
+import { Text } from "../tags/Text.tag";
 //------------------------------------------------------------------< helpers >
 import { sum } from "../helpers/Vector.helper";
 //--------------------------------------------------------------------< hooks >
 import { useState } from "react";
 //--------------------------------------------------------------------< types >
-import { TextProps } from "./SVGComponents/Text";
+import { TextProps } from "../tags/Text.tag";
 //================================================================[ < Label > ]
 export function Label({ children, origin, fill, ...props }: TextProps) {
   //-------------------------------------------------------------< properties >

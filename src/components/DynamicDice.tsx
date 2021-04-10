@@ -1,5 +1,5 @@
 //---------------------------------------------------------------< components >
-import { Dice } from "./Dice";
+import { Dice } from "../views/Dice.view";
 //------------------------------------------------------------------< helpers >
 import { zero, mod, sum, flip, mult } from "../helpers/Vector.helper";
 import { outOfBounds } from "../helpers/DynamicDice.helper";
@@ -33,6 +33,7 @@ export function DynamicDice({ dice, force, size = 50, onStop }: IProps) {
       dice.value === 0
         ? Math.floor(Math.random() * dice.sides + 1)
         : dice.value,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [offset]
   );
   //----------------------------------------------------------------< methods >
@@ -42,6 +43,7 @@ export function DynamicDice({ dice, force, size = 50, onStop }: IProps) {
     const interval = setInterval(() => updateInstant(), 1000 / 24);
 
     return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [offset]);
   //---------------------------------------------------------------------------
   function stopCondition() {

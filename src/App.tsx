@@ -1,11 +1,11 @@
 //---------------------------------------------------------------< components >
 import { Window } from "./components/Window";
 //-----------------------------------------------------------------< contexts >
-import { PlayersProvider } from "./contexts/PlayersContext";
+import { PlayersProvider } from "./cruds/Players.crud";
 import { CrossingsProvider } from "./contexts/CrossingsContext";
-import { PulsesProvider } from "./contexts/PulsesContext";
-import { DicesProvider } from "./contexts/DicesContext";
-import { NotesProvider } from "./contexts/NotesContext";
+import { PulsesProvider } from "./cruds/Pulses.crud";
+import { DicesProvider } from "./cruds/Dices.crud";
+import { NotesProvider } from "./cruds/Notes.crud";
 //==================================================================[ < App > ]
 function App() {
   //-----------------------------------------------------------------< return >
